@@ -12,6 +12,7 @@ function Todos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingTodo, setEditingTodo] = useState(null);
+  const [filter, setFilter] = useState("all");
 
   // Sayfa yüklenince todoları çek
   useEffect(() => {
@@ -161,6 +162,13 @@ function Todos() {
     }
   };
 
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "all") return true;
+    if (filter === "active") return !todo.completed;
+    if (filter === "completed") return todo.completed;
+    return true;
+  });
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
@@ -193,6 +201,42 @@ function Todos() {
             onSubmit={handleAddTodo}
           />
 
+          {/* Filter Buttons */}
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === "all"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              All
+            </button>
+
+            <button
+              onClick={() => setFilter("active")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === "active"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Active
+            </button>
+
+            <button
+              onClick={() => setFilter("completed")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                filter === "completed"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Completed
+            </button>
+          </div>
+
           {/* Loading or Tasks */}
           {loading ? (
             <div className="text-center py-12">
@@ -201,7 +245,7 @@ function Todos() {
             </div>
           ) : (
             <div className="space-y-2">
-              {todos.map((todo) => (
+              {filteredTodos.map((todo) => (
                 <TodoItem
                   key={todo._id}
                   todo={todo}
@@ -211,7 +255,7 @@ function Todos() {
                 />
               ))}
 
-              {todos.length === 0 && !loading && <EmptyState />}
+              {filteredTodos.length === 0 && !loading && <EmptyState filter={filter} />}
             </div>
           )}
 
