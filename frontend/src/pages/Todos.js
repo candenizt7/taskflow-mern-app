@@ -4,12 +4,14 @@ import Header from "../components/Header";
 import AddTaskForm from "../components/AddTaskForm";
 import TodoItem from "../components/TodoItem";
 import EmptyState from "../components/EmptyState";
+import EditTodoModal from "../components/EditTodoModal";
 
 function Todos() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingTodo, setEditingTodo] = useState(null);
 
   // Sayfa yüklenince todoları çek
   useEffect(() => {
@@ -131,6 +133,34 @@ function Todos() {
     }
   };
 
+  const handleEdit = (todo) => {
+    setEditingTodo(todo);
+  };
+
+  // handleUpdateTodo - PUT /api/todos/:id
+  const handleUpdateTodo = async (id, newTitle) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: newTitle }), // Yeni title gönder
+      });
+
+      if (!response.ok) {
+        throw new Error("Ağ hatası");
+      }
+
+      setEditingTodo(null); // Modal'ı kapat
+      fetchTodos(); // Todoları yenile
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
@@ -177,11 +207,21 @@ function Todos() {
                   todo={todo}
                   onToggle={handleToggleTodo}
                   onDelete={handleDeleteTodo}
+                  onEdit={handleEdit}
                 />
               ))}
 
               {todos.length === 0 && !loading && <EmptyState />}
             </div>
+          )}
+
+          {/* Edit Modal */}
+          {editingTodo && (
+            <EditTodoModal
+              todo={editingTodo}
+              onClose={() => setEditingTodo(null)}
+              onSave={handleUpdateTodo}
+            />
           )}
         </div>
       </main>
