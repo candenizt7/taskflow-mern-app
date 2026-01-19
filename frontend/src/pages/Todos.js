@@ -13,6 +13,7 @@ function Todos() {
   const [error, setError] = useState(null);
   const [editingTodo, setEditingTodo] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Sayfa yüklenince todoları çek
   useEffect(() => {
@@ -163,10 +164,19 @@ function Todos() {
   };
 
   const filteredTodos = todos.filter((todo) => {
-    if (filter === "all") return true;
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
-    return true;
+    // Filtre için kontrol
+    let passesFilter = false;
+    if (filter === "all") passesFilter = true;
+    if (filter === "active") passesFilter = !todo.completed;
+    if (filter === "completed") passesFilter = todo.completed;
+
+    // Search için kontrol
+    const passesSearch = todo.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    // Hem filtre hem arama koşullarını sağlayanları döndür
+    return passesFilter && passesSearch;
   });
 
   return (
@@ -200,6 +210,17 @@ function Todos() {
             onChange={(e) => setNewTodo(e.target.value)}
             onSubmit={handleAddTodo}
           />
+
+          {/* Search Input */}
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="🔍 Search todos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           {/* Filter Buttons */}
           <div className="flex gap-2 mb-4">
@@ -255,7 +276,9 @@ function Todos() {
                 />
               ))}
 
-              {filteredTodos.length === 0 && !loading && <EmptyState filter={filter} />}
+              {filteredTodos.length === 0 && !loading && (
+                <EmptyState filter={filter} />
+              )}
             </div>
           )}
 
