@@ -163,6 +163,76 @@ function Todos() {
     }
   };
 
+  // handleDeleteAll - Tüm todoları sil
+  const handleDeleteAll = async () => {
+    // Onay iste!
+    const confirm = window.confirm(
+      "Are you sure you want to delete ALL tasks?",
+    );
+    if (!confirm) return; // İptal edildi
+
+    try {
+      const token = localStorage.getItem("token");
+
+      // Her todo için DELETE request
+      const deletePromises = todos.map((todo) =>
+        fetch(`http://localhost:5000/api/todos/${todo._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      );
+
+      // Tüm request'leri paralel çalıştır
+      await Promise.all(deletePromises);
+
+      fetchTodos(); // Yenile
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // handleDeleteCompleted - Sadece tamamlananları sil
+  const handleDeleteCompleted = async () => {
+    const completedTodos = todos.filter((todo) => todo.completed);
+
+    if (completedTodos.length === 0) {
+      alert("No completed tasks to delete!");
+      return;
+    }
+
+    // Onay iste!
+    const confirm = window.confirm(
+      `Are you sure you want to delete ${completedTodos.length} completed task(s)?`,
+    );
+    if (!confirm) return; // İptal edildi
+
+    try {
+      const token = localStorage.getItem("token");
+
+      // Her completed todo için DELETE request
+      const deletePromises = completedTodos.map((todo) =>
+        fetch(`http://localhost:5000/api/todos/${todo._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      );
+
+      // Tüm request'leri paralel çalıştır
+      await Promise.all(deletePromises);
+
+      fetchTodos(); // Yenile
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  //Filter Buttons
   const filteredTodos = todos.filter((todo) => {
     // Filtre için kontrol
     let passesFilter = false;
@@ -255,6 +325,22 @@ function Todos() {
               }`}
             >
               Completed
+            </button>
+          </div>
+
+          {/* Bulk Delete Buttons */}
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={handleDeleteCompleted}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+            >
+              🗑️ Delete Completed
+            </button>
+            <button
+              onClick={handleDeleteAll}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+            >
+              🗑️ Delete All
             </button>
           </div>
 
