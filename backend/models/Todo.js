@@ -16,6 +16,12 @@ const todoSchema = new mongoose.Schema({
         type: Date,
         required: false,
     },
+    priority: {
+        type: String,
+        enum: ['low', 'medium', 'high'],
+        default: 'medium',
+        required: false,
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,   // MongoDB ObjectId
         ref: 'User',                     // İlişkili model, User modeline referans
