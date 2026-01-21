@@ -9,6 +9,7 @@ import EditTodoModal from "../components/EditTodoModal";
 function Todos() {
   const [todos, setTodos] = useState([]);
   const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState("medium");
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,6 +84,7 @@ function Todos() {
         body: JSON.stringify({
           title: newTodo,
           dueDate: dueDate || null,
+          priority: priority
         }),
       });
 
@@ -91,6 +93,7 @@ function Todos() {
       }
       setNewTodo("");
       setDueDate("");
+      setPriority("medium");
       fetchTodos();
     } catch (error) {
       setError(error.message);
@@ -145,7 +148,7 @@ function Todos() {
   };
 
   // handleUpdateTodo - PUT /api/todos/:id
-  const handleUpdateTodo = async (id, newTitle, newDueDate) => {
+  const handleUpdateTodo = async (id, newTitle, newDueDate, newPriority) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
@@ -154,7 +157,7 @@ function Todos() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title: newTitle, dueDate: newDueDate }), // Yeni title gönder
+        body: JSON.stringify({ title: newTitle, dueDate: newDueDate, priority: newPriority }), // Yeni title gönder
       });
 
       if (!response.ok) {
@@ -286,6 +289,8 @@ function Todos() {
             onSubmit={handleAddTodo}
             dueDate={dueDate}
             onDateChange={(e) => setDueDate(e.target.value)}
+            priority={priority}
+            onPriorityChange={(e) => setPriority(e.target.value)}
           />
 
           {/* Search Input */}

@@ -2,18 +2,18 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
   // Tarih formatla ve renk belirle
   const formatDate = (dateString) => {
     if (!dateString) return null;
-    
+
     const date = new Date(dateString);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Bugünü sıfırla (saat olmadan karşılaştır)
-    
+
     const todoDate = new Date(date);
     todoDate.setHours(0, 0, 0, 0);
-    
+
     // Tarih farkı (gün olarak)
     const diffTime = todoDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     // Renk belirleme
     let colorClass = "";
     if (diffDays < 0) {
@@ -25,18 +25,44 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
     } else {
       colorClass = "bg-gray-100 text-gray-700"; // Gelecek - GRİ
     }
-    
+
     // Tarih formatla (Jan 22, 2026)
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    const formattedDate = date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
-    
+
     return { formattedDate, colorClass };
   };
-  
+
+  // Priority formatla ve renk belirle
+  const getPriorityInfo = (priority) => {
+    if (!priority) return null;
+
+    const priorityMap = {
+      low: {
+        label: "Low",
+        emoji: "🟢",
+        colorClass: "bg-green-100 text-green-700",
+      },
+      medium: {
+        label: "Medium",
+        emoji: "🟡",
+        colorClass: "bg-yellow-100 text-yellow-700",
+      },
+      high: {
+        label: "High",
+        emoji: "🔴",
+        colorClass: "bg-red-100 text-red-700",
+      },
+    };
+
+    return priorityMap[priority] || null;
+  };
+
   const dateInfo = todo.dueDate ? formatDate(todo.dueDate) : null;
+  const priorityInfo = getPriorityInfo(todo.priority);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
@@ -58,8 +84,19 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
 
         {/* Due Date Badge */}
         {dateInfo && (
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${dateInfo.colorClass}`}>
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-medium ${dateInfo.colorClass}`}
+          >
             📅 {dateInfo.formattedDate}
+          </span>
+        )}
+
+        {/* Priority Badge */}
+        {priorityInfo && (
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-medium ${priorityInfo.colorClass}`}
+          >
+            {priorityInfo.emoji} {priorityInfo.label}
           </span>
         )}
 
