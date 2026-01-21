@@ -1,4 +1,43 @@
 function TodoItem({ todo, onToggle, onDelete, onEdit }) {
+  // Tarih formatla ve renk belirle
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+    
+    const date = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Bugünü sıfırla (saat olmadan karşılaştır)
+    
+    const todoDate = new Date(date);
+    todoDate.setHours(0, 0, 0, 0);
+    
+    // Tarih farkı (gün olarak)
+    const diffTime = todoDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    // Renk belirleme
+    let colorClass = "";
+    if (diffDays < 0) {
+      colorClass = "bg-red-100 text-red-700"; // Geçmiş - KIRMIZI
+    } else if (diffDays === 0) {
+      colorClass = "bg-orange-100 text-orange-700"; // Bugün - TURUNCU
+    } else if (diffDays <= 2) {
+      colorClass = "bg-yellow-100 text-yellow-700"; // 1-2 gün - SARI
+    } else {
+      colorClass = "bg-gray-100 text-gray-700"; // Gelecek - GRİ
+    }
+    
+    // Tarih formatla (Jan 22, 2026)
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+    
+    return { formattedDate, colorClass };
+  };
+  
+  const dateInfo = todo.dueDate ? formatDate(todo.dueDate) : null;
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
@@ -16,6 +55,13 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         >
           {todo.title}
         </span>
+
+        {/* Due Date Badge */}
+        {dateInfo && (
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${dateInfo.colorClass}`}>
+            📅 {dateInfo.formattedDate}
+          </span>
+        )}
 
         {/* Status Badge */}
         <span
