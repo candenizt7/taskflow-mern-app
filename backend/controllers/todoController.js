@@ -70,11 +70,12 @@ exports.getTodoById = async (req, res) => {
 
 // POST /api/todos - Yeni todo ekle (Otomatik kullanıcıya bağla)
 exports.createTodo = async (req, res) => {
-  const { title, completed } = req.body;
+  const { title, completed, dueDate } = req.body;
 
   const newTodo = await Todo.create({
     title,
     completed,
+    dueDate,
     user: req.userId  // Otomatik authMiddleware'den geldi
   });
 
@@ -83,14 +84,14 @@ exports.createTodo = async (req, res) => {
 
 // PUT /api/todos/:id - Todo güncelle (Sadece kendi todo'su)
 exports.updateTodo = async (req, res) => {
-  const { title, completed } = req.body;
+  const { title, completed, dueDate } = req.body;
 
   const todo = await Todo.findOneAndUpdate(
     {
       _id: req.params.id,
       user: req.userId  // Sadece kendi todo'su!
     },
-    { title, completed },
+    { title, completed, dueDate },
     { new: true, runValidators: true }
   );
 
