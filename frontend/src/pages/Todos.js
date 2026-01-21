@@ -10,6 +10,7 @@ function Todos() {
   const [todos, setTodos] = useState([]);
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [tags, setTags] = useState("");
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,6 +75,13 @@ function Todos() {
 
     try {
       setError("");
+
+      // Tags string'i array'e çevir
+      const tagsArray = tags
+        .split(",") // Virgülle ayır
+        .map((tag) => tag.trim()) // Boşlukları temizle
+        .filter((tag) => tag.length > 0); // Boş olanları çıkar
+
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/todos", {
         method: "POST",
@@ -84,7 +92,8 @@ function Todos() {
         body: JSON.stringify({
           title: newTodo,
           dueDate: dueDate || null,
-          priority: priority
+          priority: priority,
+          tags: tagsArray
         }),
       });
 
@@ -94,6 +103,7 @@ function Todos() {
       setNewTodo("");
       setDueDate("");
       setPriority("medium");
+      setTags("");
       fetchTodos();
     } catch (error) {
       setError(error.message);
@@ -148,7 +158,7 @@ function Todos() {
   };
 
   // handleUpdateTodo - PUT /api/todos/:id
-  const handleUpdateTodo = async (id, newTitle, newDueDate, newPriority) => {
+  const handleUpdateTodo = async (id, newTitle, newDueDate, newPriority, newTags) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
@@ -157,7 +167,12 @@ function Todos() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title: newTitle, dueDate: newDueDate, priority: newPriority }), // Yeni title gönder
+        body: JSON.stringify({
+          title: newTitle,
+          dueDate: newDueDate,
+          priority: newPriority,
+          tags: newTags
+        }), // Yeni title gönder
       });
 
       if (!response.ok) {
@@ -291,6 +306,8 @@ function Todos() {
             onDateChange={(e) => setDueDate(e.target.value)}
             priority={priority}
             onPriorityChange={(e) => setPriority(e.target.value)}
+            tags={tags}
+            onTagsChange={(e) => setTags(e.target.value)}
           />
 
           {/* Search Input */}

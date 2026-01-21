@@ -100,6 +100,20 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           </span>
         )}
 
+        {/* Tags Badges */}
+        {todo.tags && todo.tags.length > 0 && (
+          <div className="flex gap-1">
+            {todo.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Status Badge */}
         <span
           className={`px-3 py-1 rounded-full text-sm font-medium ${

@@ -13,12 +13,27 @@ function EditTodoModal({ todo, onClose, onSave }) {
   const [dueDate, setDueDate] = useState(formatDateForInput(todo.dueDate));
   const [priority, setPriority] = useState(todo.priority || "medium");
 
+  // Tags array'i string'e çevir
+  const formatTagsForInput = (tagsArray) => {
+    if (!tagsArray || tagsArray.length === 0) return "";
+    return tagsArray.join(", "); // ["Work", "Urgent"] → "Work, Urgent"
+  };
+
+  const [tags, setTags] = useState(formatTagsForInput(todo.tags));
+
   const handleSave = () => {
     if (title.trim().length < 3) {
       alert("Başlık en az 3 karakter olmalı!");
       return;
     }
-    onSave(todo._id, title, dueDate || null, priority); // Parent'a bildir
+
+    // Tags string'i array'e çevir
+    const tagsArray = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    onSave(todo._id, title, dueDate || null, priority, tagsArray);
   };
 
   return (
@@ -70,6 +85,20 @@ function EditTodoModal({ todo, onClose, onSave }) {
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Tags Input */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tags (optional)
+          </label>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="Work, Urgent, Personal (comma separated)"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

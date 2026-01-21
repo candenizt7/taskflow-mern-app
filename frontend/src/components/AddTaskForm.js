@@ -1,4 +1,14 @@
-function AddTaskForm({ value, onChange, onSubmit, dueDate, onDateChange, priority, onPriorityChange }) {
+function AddTaskForm({
+  value,
+  onChange,
+  onSubmit,
+  dueDate,
+  onDateChange,
+  priority,
+  onPriorityChange,
+  tags,
+  onTagsChange,
+}) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
       <div className="flex items-center gap-3">
@@ -18,7 +28,7 @@ function AddTaskForm({ value, onChange, onSubmit, dueDate, onDateChange, priorit
           }}
         />
 
-         {/* Priority Dropdown */}
+        {/* Priority Dropdown */}
         <select
           value={priority}
           onChange={onPriorityChange}
@@ -44,6 +54,18 @@ function AddTaskForm({ value, onChange, onSubmit, dueDate, onDateChange, priorit
         >
           Add
         </button>
+
+        {/* İkinci satır: Tags Input */}
+        <div className="flex items-center gap-2 pl-10">
+          <span className="text-gray-500 text-sm">🏷️ Tags:</span>
+          <input
+            type="text"
+            value={tags}
+            onChange={onTagsChange}
+            placeholder="Work, Urgent, Personal..."
+            className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
       </div>
     </div>
   );
