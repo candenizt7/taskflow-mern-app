@@ -13,20 +13,20 @@ function Sidebar() {
             Workspace
           </div>
 
-          <a className="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg font-medium">
+          <button className="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg font-medium w-full text-left">
             <span>📝</span>
             <span>My Tasks</span>
-          </a>
+          </button>
 
-          <a className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <button className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg w-full text-left">
             <span>👥</span>
             <span>Team</span>
-          </a>
+          </button>
 
-          <a className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <button className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg w-full text-left">
             <span>⚙️</span>
             <span>Settings</span>
-          </a>
+          </button>
         </div>
       </nav>
     </aside>
