@@ -5,6 +5,7 @@ import AddTaskForm from "../components/AddTaskForm";
 import TodoItem from "../components/TodoItem";
 import EmptyState from "../components/EmptyState";
 import EditTodoModal from "../components/EditTodoModal";
+import Statistics from "../components/Statistics";
 
 function Todos() {
   const [todos, setTodos] = useState([]);
@@ -289,6 +290,9 @@ function Todos() {
               window.location.href = "/login";
             }}
           />
+
+          {/* Statistics */}
+          {!loading && <Statistics todos={todos} />}
 
           {/* Error Message */}
           {error && (
