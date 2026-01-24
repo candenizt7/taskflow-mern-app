@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import AddTaskForm from "../components/AddTaskForm";
@@ -38,6 +39,7 @@ function Todos() {
       .then((data) => {
         setTodos(data.data);
         setLoading(false);
+        checkNotifications(data.data);
       })
       .catch((error) => {
         setError(error.message);
@@ -64,6 +66,81 @@ function Todos() {
       setTodos(data.data);
     } catch (error) {
       setError(error.message);
+    }
+  };
+
+  // Notification kontrolü
+  const checkNotifications = (todosData) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Sadece tamamlanmamış todolar
+    const incompleteTodos = todosData.filter((todo) => !todo.completed);
+
+    // Geçmiş tarihli (overdue)
+    const overdueTodos = incompleteTodos.filter((todo) => {
+      if (!todo.dueDate) return false;
+      const dueDate = new Date(todo.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate < today;
+    });
+
+    // Bugün yapılacaklar
+    const dueTodayTodos = incompleteTodos.filter((todo) => {
+      if (!todo.dueDate) return false;
+      const dueDate = new Date(todo.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate.getTime() === today.getTime();
+    });
+
+    // Yarın yapılacaklar
+    const dueTomorrowTodos = incompleteTodos.filter((todo) => {
+      if (!todo.dueDate) return false;
+      const dueDate = new Date(todo.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate.getTime() === tomorrow.getTime();
+    });
+
+    // Toast göster
+    if (overdueTodos.length > 0) {
+      toast.error(
+        `🔴 ${overdueTodos.length} overdue task${overdueTodos.length > 1 ? "s" : ""}!`,
+        {
+          duration: 5000,
+          position: "top-right",
+        },
+      );
+    }
+
+    if (dueTodayTodos.length > 0) {
+      toast(
+        `🟡 ${dueTodayTodos.length} task${dueTodayTodos.length > 1 ? "s" : ""} due today!`,
+        {
+          duration: 4000,
+          position: "top-right",
+          style: {
+            background: "#fbbf24",
+            color: "white",
+          },
+        },
+      );
+    }
+
+    if (dueTomorrowTodos.length > 0) {
+      toast(
+        `⚠️ ${dueTomorrowTodos.length} task${dueTomorrowTodos.length > 1 ? "s" : ""} due tomorrow!`,
+        {
+          duration: 3000,
+          position: "top-right",
+          style: {
+            background: "#3b82f6",
+            color: "white",
+          },
+        },
+      );
     }
   };
 
@@ -94,7 +171,7 @@ function Todos() {
           title: newTodo,
           dueDate: dueDate || null,
           priority: priority,
-          tags: tagsArray
+          tags: tagsArray,
         }),
       });
 
@@ -159,7 +236,13 @@ function Todos() {
   };
 
   // handleUpdateTodo - PUT /api/todos/:id
-  const handleUpdateTodo = async (id, newTitle, newDueDate, newPriority, newTags) => {
+  const handleUpdateTodo = async (
+    id,
+    newTitle,
+    newDueDate,
+    newPriority,
+    newTags,
+  ) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
@@ -172,7 +255,7 @@ function Todos() {
           title: newTitle,
           dueDate: newDueDate,
           priority: newPriority,
-          tags: newTags
+          tags: newTags,
         }), // Yeni title gönder
       });
 
@@ -275,6 +358,9 @@ function Todos() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
+      {/* Toaster Container */}
+      <Toaster />
+
       {/* Sidebar */}
       <Sidebar />
 
