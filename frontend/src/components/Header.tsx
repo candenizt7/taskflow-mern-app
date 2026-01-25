@@ -1,4 +1,17 @@
-function Header({ userName, onLogout }) {
+
+// ========================================
+// PROPS INTERFACE
+// ========================================
+interface HeaderProps {
+  userName: string | null; // localStorage'dan geliyor, null olabilir
+  onLogout: () => void;   // Logout fonksiyonu
+}
+
+
+// ========================================
+// COMPONENT
+// ========================================
+function Header({ userName, onLogout }: HeaderProps) {
   return (
     <div className="mb-8 flex items-start justify-between">
       <div>

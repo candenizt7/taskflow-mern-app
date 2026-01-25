@@ -16,7 +16,6 @@ import {
   TodosResponse,
   CreateTodoRequest,
   UpdateTodoRequest,
-  DeleteTodoResponse,
   FilterType,
 } from "../types/todo.types";
 
