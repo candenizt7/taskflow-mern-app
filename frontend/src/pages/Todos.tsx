@@ -1,24 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import AddTaskForm from "../components/AddTaskForm";
-import TodoItem from "../components/TodoItem";
-import EmptyState from "../components/EmptyState";
-import EditTodoModal from "../components/EditTodoModal";
-import Statistics from "../components/Statistics";
+import Sidebar from "../components/Sidebar.js";
+import Header from "../components/Header.js";
+import AddTaskForm from "../components/AddTaskForm.js";
+import TodoItem from "../components/TodoItem.js";
+import EmptyState from "../components/EmptyState.tsx";
+import EditTodoModal from "../components/EditTodoModal.js";
+import Statistics from "../components/Statistics.js";
+
+// ========================================
+// TYPE IMPORTS - BUNU EKLE
+// ========================================
+import {
+  Todo,
+  TodosResponse,
+  CreateTodoRequest,
+  UpdateTodoRequest,
+  DeleteTodoResponse,
+  FilterType,
+} from "../types/todo.types";
 
 function Todos() {
-  const [todos, setTodos] = useState([]);
-  const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("medium");
-  const [tags, setTags] = useState("");
-  const [newTodo, setNewTodo] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editingTodo, setEditingTodo] = useState(null);
-  const [filter, setFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [dueDate, setDueDate] = useState<string>("");
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
+  const [tags, setTags] = useState<string>("");
+  const [newTodo, setNewTodo] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [filter, setFilter] = useState<FilterType>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Sayfa yüklenince todoları çek
   useEffect(() => {
@@ -36,19 +48,19 @@ function Todos() {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data: TodosResponse) => {
         setTodos(data.data);
         setLoading(false);
         checkNotifications(data.data);
       })
       .catch((error) => {
-        setError(error.message);
+        setError((error as Error).message);
         setLoading(false);
       });
   }, []);
 
   // fetchTodos - GET /api/todos
-  const fetchTodos = async () => {
+  const fetchTodos = async (): Promise<void> => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/todos", {
@@ -62,15 +74,15 @@ function Todos() {
       if (!response.ok) {
         throw new Error("Ağ hatası");
       }
-      const data = await response.json();
+      const data: TodosResponse = await response.json();
       setTodos(data.data);
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
   // Notification kontrolü
-  const checkNotifications = (todosData) => {
+  const checkNotifications = (todosData: Todo[]): void => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -145,7 +157,7 @@ function Todos() {
   };
 
   // handleAddTodo - POST /api/todos
-  const handleAddTodo = async () => {
+  const handleAddTodo = async (): Promise<void> => {
     if (!newTodo || newTodo.trim().length < 3) {
       setError("Başlık en az 3 karakter olmalı!");
       return; // İşlemi durdur!
@@ -161,18 +173,21 @@ function Todos() {
         .filter((tag) => tag.length > 0); // Boş olanları çıkar
 
       const token = localStorage.getItem("token");
+
+      const body: CreateTodoRequest = {
+        title: newTodo,
+        dueDate: dueDate || null,
+        priority: priority,
+        tags: tagsArray,
+      };
+
       const response = await fetch("http://localhost:5000/api/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          title: newTodo,
-          dueDate: dueDate || null,
-          priority: priority,
-          tags: tagsArray,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -184,12 +199,12 @@ function Todos() {
       setTags("");
       fetchTodos();
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
   // handleDeleteTodo - DELETE /api/todos/:id
-  const handleDeleteTodo = async (id) => {
+  const handleDeleteTodo = async (id: string): Promise<void> => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
@@ -205,21 +220,27 @@ function Todos() {
       }
       fetchTodos();
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
   // handleToggleTodo - PUT /api/todos/:id
-  const handleToggleTodo = async (id, completed) => {
+  const handleToggleTodo = async (
+    id: string,
+    completed: boolean,
+  ): Promise<void> => {
     try {
       const token = localStorage.getItem("token");
+      const body: UpdateTodoRequest = {
+        completed: !completed,
+      };
       const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ completed: !completed }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -227,36 +248,39 @@ function Todos() {
       }
       fetchTodos();
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
-  const handleEdit = (todo) => {
+  const handleEdit = (todo: Todo): void => {
     setEditingTodo(todo);
   };
 
   // handleUpdateTodo - PUT /api/todos/:id
   const handleUpdateTodo = async (
-    id,
-    newTitle,
-    newDueDate,
-    newPriority,
-    newTags,
-  ) => {
+    id: string,
+    newTitle: string,
+    newDueDate: string | null,
+    newPriority: "low" | "medium" | "high",
+    newTags: string[],
+  ): Promise<void> => {
     try {
       const token = localStorage.getItem("token");
+
+      const body: UpdateTodoRequest = {
+        title: newTitle,
+        dueDate: newDueDate,
+        priority: newPriority,
+        tags: newTags,
+      };
+
       const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          title: newTitle,
-          dueDate: newDueDate,
-          priority: newPriority,
-          tags: newTags,
-        }), // Yeni title gönder
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -266,12 +290,12 @@ function Todos() {
       setEditingTodo(null); // Modal'ı kapat
       fetchTodos(); // Todoları yenile
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
   // handleDeleteAll - Tüm todoları sil
-  const handleDeleteAll = async () => {
+  const handleDeleteAll = async (): Promise<void> => {
     // Onay iste!
     const confirm = window.confirm(
       "Are you sure you want to delete ALL tasks?",
@@ -297,13 +321,13 @@ function Todos() {
 
       fetchTodos(); // Yenile
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
   // handleDeleteCompleted - Sadece tamamlananları sil
-  const handleDeleteCompleted = async () => {
-    const completedTodos = todos.filter((todo) => todo.completed);
+  const handleDeleteCompleted = async (): Promise<void> => {
+    const completedTodos: Todo[] = todos.filter((todo) => todo.completed);
 
     if (completedTodos.length === 0) {
       alert("No completed tasks to delete!");
@@ -335,7 +359,7 @@ function Todos() {
 
       fetchTodos(); // Yenile
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
@@ -390,14 +414,14 @@ function Todos() {
           {/* Add Task Form */}
           <AddTaskForm
             value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setNewTodo(e.target.value)}
             onSubmit={handleAddTodo}
             dueDate={dueDate}
-            onDateChange={(e) => setDueDate(e.target.value)}
+            onDateChange={(e: ChangeEvent<HTMLInputElement>) => setDueDate(e.target.value)}
             priority={priority}
-            onPriorityChange={(e) => setPriority(e.target.value)}
+            onPriorityChange={(e: ChangeEvent<HTMLSelectElement>) => setPriority(e.target.value as "low" | "medium" | "high")}
             tags={tags}
-            onTagsChange={(e) => setTags(e.target.value)}
+            onTagsChange={(e: ChangeEvent<HTMLInputElement>) => setTags(e.target.value)}
           />
 
           {/* Search Input */}
@@ -406,7 +430,7 @@ function Todos() {
               type="text"
               placeholder="🔍 Search todos..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import './App.css';
 import Register from './pages/Register';
-import Todos from './pages/Todos';
+import Todos from './pages/Todos.tsx';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
 

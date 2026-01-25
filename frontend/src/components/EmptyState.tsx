@@ -1,6 +1,19 @@
-function EmptyState({ filter }) {
-  // Filter'a göre mesaj belirle
-  const getMessage = () => {
+// 1. PROPS INTERFACE TANIMLA
+interface EmptyStateProps {
+  filter: 'all' | 'active' | 'completed'; // Sadece bu 3 değer
+}
+
+// 2. MESSAGE TYPE TANIMLA (getMessage'ın döndüreceği obje)
+interface EmptyMessage {
+  emoji: string;
+  title: string;
+  description: string;
+}
+
+// 3. COMPONENT TANIMLA
+function EmptyState({ filter }: EmptyStateProps) {
+  // getMessage fonksiyonuna return type ekle
+  const getMessage = (): EmptyMessage => {
     if (filter === "active") {
       return {
         emoji: "🎉",
@@ -25,7 +38,7 @@ function EmptyState({ filter }) {
     };
   };
 
-  const message = getMessage();
+  const message: EmptyMessage = getMessage();
 
   return (
     <div className="text-center py-12">
