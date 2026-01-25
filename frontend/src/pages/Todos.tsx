@@ -1,12 +1,12 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import Sidebar from "../components/Sidebar.js";
-import Header from "../components/Header.js";
-import AddTaskForm from "../components/AddTaskForm.js";
-import TodoItem from "../components/TodoItem.js";
-import EmptyState from "../components/EmptyState.tsx";
-import EditTodoModal from "../components/EditTodoModal.js";
-import Statistics from "../components/Statistics.js";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import AddTaskForm from "../components/AddTaskForm";
+import TodoItem from "../components/TodoItem";
+import EmptyState from "../components/EmptyState";
+import EditTodoModal from "../components/EditTodoModal";
+import Statistics from "../components/Statistics";
 
 // ========================================
 // TYPE IMPORTS - BUNU EKLE
