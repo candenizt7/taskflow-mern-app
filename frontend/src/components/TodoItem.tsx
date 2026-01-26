@@ -1,17 +1,52 @@
-function TodoItem({ todo, onToggle, onDelete, onEdit }) {
+// ========================================
+// TYPE IMPORTS
+// ========================================
+import { Todo } from '../types/todo.types';
+
+// ========================================
+// INTERFACE - DateInfo (formatDate return)
+// ========================================
+interface DateInfo {
+  formattedDate: string;
+  colorClass: string;
+}
+
+// ========================================
+// INTERFACE - PriorityInfo (getPriorityInfo return)
+// ========================================
+interface PriorityInfo {
+  label: string;
+  emoji: string;
+  colorClass: string;
+}
+
+// ========================================
+// PROPS INTERFACE
+// ========================================
+interface TodoItemProps {
+  todo: Todo;
+  onToggle: (id: string, completed: boolean) => void;
+  onDelete: (id: string) => void;
+  onEdit: (todo: Todo) => void;
+}
+
+// ========================================
+// COMPONENT
+// ========================================
+function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
   // Tarih formatla ve renk belirle
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): DateInfo | null => {
     if (!dateString) return null;
 
     const date = new Date(dateString);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Bugünü sıfırla (saat olmadan karşılaştır)
+    today.setHours(0, 0, 0, 0);
 
     const todoDate = new Date(date);
     todoDate.setHours(0, 0, 0, 0);
 
     // Tarih farkı (gün olarak)
-    const diffTime = todoDate - today;
+    const diffTime = todoDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     // Renk belirleme
@@ -37,10 +72,10 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
   };
 
   // Priority formatla ve renk belirle
-  const getPriorityInfo = (priority) => {
+  const getPriorityInfo = (priority: string): PriorityInfo | null => {
     if (!priority) return null;
 
-    const priorityMap = {
+    const priorityMap: Record<string, PriorityInfo> = {
       low: {
         label: "Low",
         emoji: "🟢",
@@ -62,9 +97,9 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
   };
 
   const dateInfo = todo.dueDate ? formatDate(todo.dueDate) : null;
-  const priorityInfo = getPriorityInfo(todo.priority);
+  const priorityInfo = todo.priority ? getPriorityInfo(todo.priority) : null;
 
-  return (
+   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
         {/* Checkbox */}
@@ -103,7 +138,7 @@ function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         {/* Tags Badges */}
         {todo.tags && todo.tags.length > 0 && (
           <div className="flex gap-1">
-            {todo.tags.map((tag, index) => (
+            {todo.tags.map((tag: string, index: number) => (
               <span
                 key={index}
                 className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
