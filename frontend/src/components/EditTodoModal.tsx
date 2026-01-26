@@ -1,34 +1,58 @@
-import { useState } from "react";
+// ========================================
+// TYPE IMPORTS
+// ========================================
+import { useState, ChangeEvent, MouseEvent } from "react";
+import { Todo } from "../types/todo.types";
 
-function EditTodoModal({ todo, onClose, onSave }) {
-  const [title, setTitle] = useState(todo.title); // Mevcut title'ı göster
+// ========================================
+// PROPS INTERFACE
+// ========================================
+interface EditTodoModalProps {
+  todo: Todo;
+  onClose: () => void;
+  onSave: (
+    id: string,
+    title: string,
+    dueDate: string | null,
+    priority: "low" | "medium" | "high",
+    tags: string[]
+  ) => void;
+}
 
+// ========================================
+// COMPONENT
+// ========================================
+function EditTodoModal({ todo, onClose, onSave }: EditTodoModalProps) {
   // dueDate'i formatla (ISO string → YYYY-MM-DD)
-  const formatDateForInput = (dateString) => {
+  const formatDateForInput = (dateString?: string | null): string => {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toISOString().split("T")[0]; // "2026-01-22"
   };
 
-  const [dueDate, setDueDate] = useState(formatDateForInput(todo.dueDate));
-  const [priority, setPriority] = useState(todo.priority || "medium");
-
   // Tags array'i string'e çevir
-  const formatTagsForInput = (tagsArray) => {
+  const formatTagsForInput = (tagsArray?: string[]): string => {
     if (!tagsArray || tagsArray.length === 0) return "";
     return tagsArray.join(", "); // ["Work", "Urgent"] → "Work, Urgent"
   };
 
-  const [tags, setTags] = useState(formatTagsForInput(todo.tags));
+  const [title, setTitle] = useState<string>(todo.title);
+  const [dueDate, setDueDate] = useState<string>(
+    formatDateForInput(todo.dueDate)
+  );
+  const [priority, setPriority] = useState<"low" | "medium" | "high">(
+    todo.priority || "medium"
+  );
+  const [tags, setTags] = useState<string>(formatTagsForInput(todo.tags));
 
-  const handleSave = () => {
+  const handleSave = (): void => {
     if (title.trim().length < 3) {
       alert("Başlık en az 3 karakter olmalı!");
       return;
     }
 
     // Tags string'i array'e çevir
-    const tagsArray = tags
+    const tagsArray: string[] = tags
       .split(",")
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
@@ -45,7 +69,7 @@ function EditTodoModal({ todo, onClose, onSave }) {
       {/* Modal Box */}
       <div
         className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl"
-        onClick={(e) => e.stopPropagation()} // Modal'a tıklayınca kapanmasın
+        onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()} // Modal'a tıklayınca kapanmasın
       >
         {/* Header */}
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Edit Task</h2>
@@ -54,7 +78,9 @@ function EditTodoModal({ todo, onClose, onSave }) {
         <input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setTitle(e.target.value)
+          }
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
           placeholder="Task title..."
           autoFocus
@@ -67,7 +93,9 @@ function EditTodoModal({ todo, onClose, onSave }) {
           </label>
           <select
             value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              setPriority(e.target.value as "low" | "medium" | "high")
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="low">🟢 Low</option>
@@ -84,7 +112,9 @@ function EditTodoModal({ todo, onClose, onSave }) {
           <input
             type="date"
             value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setDueDate(e.target.value)
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -97,7 +127,9 @@ function EditTodoModal({ todo, onClose, onSave }) {
           <input
             type="text"
             value={tags}
-            onChange={(e) => setTags(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTags(e.target.value)
+            }
             placeholder="Work, Urgent, Personal (comma separated)"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
