@@ -1,3 +1,26 @@
+// ========================================
+// TYPE IMPORTS
+// ========================================
+import { ChangeEvent, KeyboardEvent } from "react";
+
+// ========================================
+// PROPS INTERFACE
+// ========================================
+interface AddTaskFormProps {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: () => void;
+  dueDate: string;
+  onDateChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  priority: "low" | "medium" | "high";
+  onPriorityChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  tags: string;
+  onTagsChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+// ========================================
+// COMPONENT
+// ========================================
 function AddTaskForm({
   value,
   onChange,
@@ -8,12 +31,13 @@ function AddTaskForm({
   onPriorityChange,
   tags,
   onTagsChange,
-}) {
+}: AddTaskFormProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
       <div className="flex items-center gap-3">
         {/* Plus Icon */}
         <span className="text-2xl text-gray-400">➕</span>
+        
         {/* Input */}
         <input
           type="text"
@@ -21,7 +45,7 @@ function AddTaskForm({
           onChange={onChange}
           placeholder="Add new task..."
           className="flex-1 outline-none text-gray-700 placeholder-gray-400 text-base"
-          onKeyDown={(e) => {
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
               onSubmit();
             }
