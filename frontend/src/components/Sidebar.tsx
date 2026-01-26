@@ -1,3 +1,6 @@
+// ========================================
+// COMPONENT - NO PROPS!
+// ========================================
 function Sidebar() {
   return (
     <aside className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">

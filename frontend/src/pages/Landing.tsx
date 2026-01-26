@@ -1,5 +1,11 @@
+// ========================================
+// TYPE IMPORTS
+// ========================================
 import { useNavigate } from "react-router-dom";
 
+// ========================================
+// COMPONENT - NO PROPS!
+// ========================================
 function Landing() {
   const navigate = useNavigate();
 
@@ -9,12 +15,9 @@ function Landing() {
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-blue-600">TaskFlow</h1>
             </div>
-
-            {/* Right side buttons */}
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate("/login")}
@@ -36,20 +39,15 @@ function Landing() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          {/* Main Heading */}
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             Organize Your Work,
             <br />
             <span className="text-blue-600">Boost Your Productivity</span>
           </h1>
-
-          {/* Subtitle */}
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             TaskFlow helps you manage tasks efficiently. Stay organized,
             collaborate with your team, and get more done.
           </p>
-
-          {/* CTA Buttons */}
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => navigate("/register")}
@@ -64,8 +62,6 @@ function Landing() {
               Login
             </button>
           </div>
-
-          {/* Visual Element */}
           <div className="mt-16 text-6xl">✨ 🚀 💼</div>
         </div>
       </section>
@@ -80,10 +76,7 @@ function Landing() {
             Powerful features to help you manage your tasks efficiently
           </p>
         </div>
-
-        {/* Feature Cards */}
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Feature 1 */}
           <div className="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow">
             <div className="text-5xl mb-4">✨</div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">
@@ -94,8 +87,6 @@ function Landing() {
               tasks in seconds.
             </p>
           </div>
-
-          {/* Feature 2 */}
           <div className="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow">
             <div className="text-5xl mb-4">🚀</div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">
@@ -106,8 +97,6 @@ function Landing() {
               a deadline.
             </p>
           </div>
-
-          {/* Feature 3 */}
           <div className="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow">
             <div className="text-5xl mb-4">💼</div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">
@@ -120,17 +109,15 @@ function Landing() {
           </div>
         </div>
       </section>
+
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            {/* Left - Logo & Copyright */}
             <div className="mb-4 md:mb-0">
               <h3 className="text-2xl font-bold mb-2">TaskFlow</h3>
               <p className="text-gray-400">© 2025 TaskFlow. Built with ❤️</p>
             </div>
-
-            {/* Right - Links */}
             <div className="flex gap-8">
               <button
                 onClick={() => navigate("/login")}

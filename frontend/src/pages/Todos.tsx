@@ -9,7 +9,7 @@ import EditTodoModal from "../components/EditTodoModal";
 import Statistics from "../components/Statistics";
 
 // ========================================
-// TYPE IMPORTS - BUNU EKLE
+// TYPE IMPORTS
 // ========================================
 import {
   Todo,
